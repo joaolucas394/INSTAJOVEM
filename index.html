@@ -1,753 +1,580 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JM Produtora | Comerciais na SBT & Produção Audiovisual</title>
-    <!-- Google Fonts & FontAwesome para ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #d32f2f; /* Vermelho SBT/Vídeo */
-            --primary-dark: #b71c1c;
-            --accent: #ff9800;
-            --dark: #121212;
-            --dark-card: #1e1e1e;
-            --light: #f5f5f5;
-            --gray: #888;
-            --transition: all 0.3s ease;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0614">
+<title>InstaJovem</title>
+<style>
+/* ========== 1. VARIÁVEIS ========== */
+:root{
+  --bg:#0b0614; --sf:#150c24; --sf2:#1f1235; --ln:#33204f; --tx:#f6f0ff; --mu:#a996c4;
+  --p:#a855f7; --m:#ec4899; --b:#38bdf8; --live:#ff3b5c;
+  --g:linear-gradient(135deg,#a855f7,#ec4899 60%,#38bdf8);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:100%} /* 1rem = 16px; tudo abaixo usa rem/%/vw para escalar */
+body{
+  min-height:100dvh; display:grid; place-items:center; color:var(--tx); overflow:hidden;
+  font:clamp(.875rem,.82rem + .25vw,1rem)/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(60rem 30rem at 10% -10%,rgba(168,85,247,.3),transparent 70%),
+             radial-gradient(50rem 30rem at 100% 110%,rgba(56,189,248,.2),transparent 70%),#07030c;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit}
+ul{list-style:none}
+[hidden]{display:none!important}
+img,svg{max-width:100%}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
-        }
+/* ========== 2. LAYOUT ADAPTATIVO ========== */
+/* Celular (<768px): app em tela cheia, barra inferior */
+.app{
+  width:100%; height:100dvh; display:grid; background:var(--bg); overflow:hidden; position:relative;
+  grid-template:"m" minmax(0,1fr) "n" auto / minmax(0,1fr);
+}
+.main{grid-area:m; position:relative; min-height:0}
+.nav{
+  grid-area:n; display:grid; grid-template-columns:repeat(4,1fr); background:rgba(21,12,36,.95);
+  backdrop-filter:blur(14px); border-top:1px solid var(--ln); padding-bottom:env(safe-area-inset-bottom);
+}
+.brand{display:none}
+.nb{position:relative; display:grid; justify-items:center; gap:.1rem; padding:.55rem 0; color:var(--mu); font-size:.7rem}
+.nb .i{font-size:1.35rem; filter:grayscale(1) opacity(.7)}
+.nb.on{color:var(--tx)} .nb.on .i{filter:none}
+.nb .dot{position:absolute; top:.45rem; left:56%; min-width:.5rem; height:.5rem; border-radius:99px; background:var(--live)}
 
-        body {
-            background-color: var(--dark);
-            color: var(--light);
-            overflow-x: hidden;
-        }
+/* Tablet/Notebook (>=768px): moldura centralizada com sidebar à esquerda */
+@media (min-width:768px){
+  .app{
+    width:min(94vw,64rem); height:min(50rem,92dvh); border-radius:1.75rem; border:1px solid var(--ln);
+    box-shadow:0 2rem 6rem -1.5rem rgba(168,85,247,.5);
+    grid-template:"n m" minmax(0,1fr) / 13.5rem minmax(0,1fr);
+  }
+  .nav{display:flex; flex-direction:column; gap:.3rem; padding:1.2rem .8rem; border-top:0; border-right:1px solid var(--ln)}
+  .brand{display:block; font-size:1.5rem; font-weight:800; padding:.2rem .8rem 1rem}
+  .brand b{background:var(--g); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .nb{display:flex; align-items:center; gap:.8rem; padding:.8rem .9rem; border-radius:.9rem; font-size:1rem; justify-items:unset}
+  .nb:hover{background:var(--sf2)} .nb.on{background:var(--sf2)}
+  .nb .dot{position:static; margin-left:auto}
+}
+/* Desktop largo (>=1200px): painel mais amplo */
+@media (min-width:1200px){ .app{width:min(92vw,78rem); grid-template-columns:16rem minmax(0,1fr)} }
 
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(18, 18, 18, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+/* ========== 3. TELAS ========== */
+.view{position:absolute; inset:0; overflow-y:auto; display:none; scrollbar-width:thin; scrollbar-color:var(--ln) transparent}
+.view.on{display:block; animation:in .25s ease}
+#chat.on{display:grid; grid-template-columns:minmax(0,1fr)}
+#live.on{display:flex; flex-direction:column}
+@keyframes in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}
+.col{width:100%; max-width:38rem; margin-inline:auto} /* coluna central do feed/perfil */
+.top{position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem;
+  background:rgba(11,6,20,.9); backdrop-filter:blur(12px); border-bottom:1px solid var(--ln)}
+.top h1,.top h2{font-size:1.2rem}
+.logo b{background:var(--g); -webkit-background-clip:text; background-clip:text; color:transparent}
+.av{--s:2.8rem; width:var(--s); height:var(--s); border-radius:50%; flex-shrink:0; display:grid; place-items:center;
+  font-size:calc(var(--s)*.5); background:linear-gradient(135deg,var(--a),var(--b))}
+.btn{width:100%; padding:.85rem 1rem; border-radius:.9rem; font-weight:700; color:#fff; background:var(--g); transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn2{flex:1; padding:.6rem; border-radius:.7rem; font-weight:600; background:var(--sf2); border:1px solid var(--ln)}
+.mini{padding:.35rem .7rem; border-radius:.6rem; font-size:.75rem; font-weight:700; background:var(--g); color:#fff}
+.mini.gh{background:none; border:1px solid var(--ln); color:var(--mu)}
+input[type=text],select{width:100%; min-width:0; background:var(--sf2); border:1px solid var(--ln); color:var(--tx); border-radius:99px; padding:.65rem 1rem; outline:none}
+input:focus,select:focus{border-color:var(--p); box-shadow:0 0 0 .2rem rgba(168,85,247,.25)}
+.send{width:2.6rem; height:2.6rem; flex-shrink:0; border-radius:50%; background:var(--g); color:#fff}
+.empty{text-align:center; color:var(--mu); padding:1.5rem 1rem}
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--light);
-        }
+/* ========== 4. FEED + STORIES ========== */
+.stories{display:flex; gap:.9rem; overflow-x:auto; padding:.9rem 1rem; scrollbar-width:none; border-bottom:1px solid var(--ln)}
+.sb{flex:0 0 4.5rem; display:grid; justify-items:center; gap:.3rem; font-size:.72rem; color:var(--mu)}
+.sb span:last-child{max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ring{padding:.2rem; border-radius:50%; background:var(--g)} .ring.seen{background:var(--ln)} .ring.none{background:none; border:2px dashed var(--ln)}
+.ring .av{--s:3.6rem; border:.2rem solid var(--bg)}
+.post{border-bottom:1px solid var(--ln); padding-bottom:.5rem}
+@media (min-width:768px){.post{border:1px solid var(--ln); border-radius:1.1rem; margin:1rem; background:var(--sf); overflow:hidden}}
+.ph{display:flex; align-items:center; gap:.7rem; padding:.7rem 1rem}
+.ph small{display:block; color:var(--mu); font-size:.75rem}
+.tag{margin-left:auto; font-size:.65rem; padding:.2rem .6rem; border-radius:99px; border:1px solid var(--b); color:var(--b)}
+.media{position:relative; width:100%; aspect-ratio:1/1; display:grid; place-items:center; font-size:clamp(4rem,18vw,7rem); user-select:none; overflow:hidden}
+@media (min-width:768px){.media{aspect-ratio:4/3; font-size:6rem}}
+.pop{position:absolute; inset:0; display:grid; place-items:center; font-size:5rem; opacity:0; pointer-events:none}
+.pop.go{animation:pop .7s ease}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}25%{opacity:1;transform:scale(1.2)}100%{opacity:0;transform:scale(1)}}
+.acts{display:flex; gap:.3rem; padding:.4rem .6rem}
+.act{padding:.4rem .6rem; font-weight:600; font-size:.95rem}
+.act.on{color:var(--m)}
+.cap,.cm p,.ver{padding:0 1rem}
+.cap{margin:.1rem 0 .3rem; overflow-wrap:anywhere}
+.ver{display:block; color:var(--mu); font-size:.8rem; text-align:left; margin:.2rem 0}
+.cm p{font-size:.88rem; margin-bottom:.25rem; overflow-wrap:anywhere}
+.cf{display:flex; gap:.5rem; padding:.4rem 1rem}
+.buy{display:block; width:calc(100% - 2rem); margin:.3rem 1rem .5rem; padding:.6rem; border-radius:.7rem; background:var(--b); color:#07030c; font-weight:800}
 
-        .logo span {
-            color: var(--primary);
-        }
+/* ========== 5. CHAT ========== */
+.clist{overflow-y:auto; min-height:0}
+.ci{width:100%; display:flex; align-items:center; gap:.8rem; padding:.75rem 1rem; text-align:left}
+.ci:hover,.ci.on{background:var(--sf)}
+.ci .t{flex:1; min-width:0}
+.ci small{display:block; color:var(--mu); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.unr{min-width:1.3rem; height:1.3rem; padding:0 .3rem; border-radius:99px; background:var(--m); font-size:.7rem; font-weight:700; display:grid; place-items:center; font-style:normal}
+.conv{position:absolute; inset:0; z-index:6; background:var(--bg); display:none; flex-direction:column}
+#chat.open .conv{display:flex}
+.ch{display:flex; align-items:center; gap:.5rem; padding:.6rem; border-bottom:1px solid var(--ln)}
+.ch .who{flex:1; min-width:0; line-height:1.2} .ch small{color:var(--b)}
+.ib{width:2.6rem; height:2.6rem; border-radius:50%; font-size:1.2rem} .ib:hover{background:var(--sf2)}
+.msgs{flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:.5rem; min-height:0}
+.m{max-width:80%; padding:.55rem .85rem; border-radius:1.1rem; overflow-wrap:anywhere}
+.m time{display:block; font-size:.65rem; opacity:.65}
+.m.el{align-self:flex-start; background:var(--sf2); border-bottom-left-radius:.3rem}
+.m.me{align-self:flex-end; background:var(--g); border-bottom-right-radius:.3rem}
+.m.sys{align-self:center; border:1px dashed var(--ln); color:var(--mu); font-size:.78rem}
+.cmp{display:flex; gap:.5rem; padding:.7rem; border-top:1px solid var(--ln)}
+.hide-d{display:inline-grid}
+@media (min-width:768px){
+  #chat.on{grid-template-columns:19rem minmax(0,1fr)}
+  .clist{border-right:1px solid var(--ln)}
+  .conv{position:static; display:flex} .hide-d{display:none}
+  .conv.none .ch,.conv.none .cmp{visibility:hidden}
+}
 
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
+/* ========== 6. LIVES ========== */
+.chips{display:flex; gap:.5rem; padding:.7rem 1rem; overflow-x:auto; scrollbar-width:none; flex-shrink:0}
+.chip{flex-shrink:0; padding:.4rem .9rem; border-radius:99px; border:1px solid var(--ln); color:var(--mu); font-weight:600; font-size:.85rem}
+.chip.on{background:var(--g); border-color:transparent; color:#fff}
+.lw{flex:1; min-height:0; display:flex; flex-direction:column; gap:.7rem; padding:0 .8rem .8rem}
+.stage{position:relative; flex:1 1 55%; min-height:12rem; border-radius:1.2rem; overflow:hidden; background:var(--lbg)}
+.stage::before{content:""; position:absolute; inset:-30%; background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.28),transparent 40%); animation:fl 8s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translate(20%,15%) scale(1.2)}}
+.le{position:absolute; inset:0; display:grid; place-items:center; font-size:clamp(4rem,16vw,7rem); animation:bt 1.4s ease-in-out infinite}
+@keyframes bt{50%{transform:scale(1.08)}}
+.lb{position:absolute; top:.8rem; left:.8rem; right:.8rem; display:flex; justify-content:space-between; gap:.5rem; align-items:center}
+.air{background:var(--live); padding:.2rem .6rem; border-radius:.5rem; font-size:.72rem; font-weight:800}
+.vw{background:rgba(0,0,0,.45); padding:.2rem .6rem; border-radius:.5rem; font-size:.78rem}
+.lh{position:absolute; left:.8rem; right:.8rem; bottom:.8rem; display:flex; align-items:center; gap:.6rem; text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.lh .av{--s:2.4rem; border:2px solid #fff} .lh div{min-width:0} .lh small{display:block; opacity:.9; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.fol{margin-left:auto; padding:.35rem .9rem; border-radius:99px; background:#fff; color:#111; font-size:.78rem; font-weight:700; text-shadow:none}
+.fol.on{background:rgba(255,255,255,.25); color:#fff}
+.hearts{position:absolute; right:.8rem; bottom:3.5rem; width:2rem; height:60%; pointer-events:none}
+.ht{position:absolute; bottom:0; font-size:1.5rem; animation:up 1.8s ease-out forwards}
+@keyframes up{to{transform:translateY(-14rem) scale(1.3); opacity:0}}
+.lbox{flex:1 1 45%; min-height:9rem; display:flex; flex-direction:column; background:var(--sf); border:1px solid var(--ln); border-radius:1.2rem; overflow:hidden}
+.lchat{flex:1; overflow-y:auto; padding:.7rem; display:flex; flex-direction:column; gap:.3rem; min-height:0}
+.lchat p{font-size:.85rem; overflow-wrap:anywhere} .lchat b{color:var(--b); margin-right:.3rem} .lchat p.sys b{color:var(--m)}
+@media (min-width:768px){ .lw{flex-direction:row} .stage{flex:1 1 62%} .lbox{flex:1 1 38%} }
 
-        nav ul li a {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-        }
+/* ========== 7. PERFIL ========== */
+.pt{display:flex; align-items:center; gap:1.2rem; padding:1rem}
+.pt .av{--s:5.5rem; outline:3px solid var(--m); outline-offset:3px}
+.stats{flex:1; display:flex; justify-content:space-around; text-align:center}
+.stats b{display:block} .stats small{color:var(--mu); font-size:.75rem}
+.bio{padding:0 1rem; overflow-wrap:anywhere}
+.badge{margin-left:.4rem; font-size:.68rem; padding:.15rem .5rem; border-radius:99px; background:var(--g); font-weight:700}
+.pb{display:flex; gap:.5rem; padding:.9rem 1rem}
+.banner{display:flex; align-items:center; gap:.9rem; width:calc(100% - 2rem); margin:0 1rem 1rem; padding:1rem; text-align:left;
+  border-radius:1.1rem; background:linear-gradient(135deg,rgba(168,85,247,.35),rgba(56,189,248,.25)); border:1px solid var(--p); box-shadow:0 0 1.8rem -.5rem var(--p)}
+.banner .ic{font-size:2rem} .banner small{display:block; color:#e8d6f7}
+.biz{margin:0 1rem 1rem; padding:1rem; border-radius:1.1rem; background:var(--sf); border:1px solid var(--ln)}
+.biz h3{font-size:1rem; margin-bottom:.7rem; display:flex; justify-content:space-between; gap:.5rem}
+.biz h3 span{font-size:.72rem; color:var(--b)}
+.kp{display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-bottom:1rem}
+.kp div{background:var(--sf2); border-radius:.8rem; padding:.6rem; text-align:center}
+.kp b{display:block; color:var(--b)} .kp small{color:var(--mu); font-size:.68rem}
+.pl{display:grid; grid-template-columns:repeat(auto-fill,minmax(9rem,1fr)); gap:.6rem; margin-bottom:.8rem}
+.pr{background:var(--sf2); border-radius:.9rem; padding:.7rem; display:grid; gap:.3rem; justify-items:start}
+.pr .e{font-size:2rem} .pr small{color:var(--b); font-weight:700}
+.pf{display:grid; grid-template-columns:5rem minmax(0,1fr); gap:.5rem}
+.pf .btn{grid-column:1/-1; padding:.7rem}
+.cancel{display:block; margin:.8rem auto 0; font-size:.75rem; color:var(--mu); text-decoration:underline}
+.g3{display:grid; grid-template-columns:repeat(3,1fr); gap:.2rem}
+.g3 span{aspect-ratio:1/1; display:grid; place-items:center; font-size:clamp(2rem,9vw,3rem)}
 
-        nav ul li a:hover {
-            color: var(--primary);
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
-            margin-top: 60px;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .hero h1 span {
-            color: var(--primary);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #ccc;
-            max-width: 700px;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            padding: 14px 35px;
-            border-radius: 30px;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
-        }
-
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        /* Seção Carrossel 3D */
-        .carousel-section {
-            padding: 100px 20px;
-            background: #181818;
-            text-align: center;
-            position: relative;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            color: var(--gray);
-            margin-bottom: 60px;
-        }
-
-        .scene {
-            width: 300px;
-            height: 200px;
-            margin: 0 auto;
-            perspective: 1000px;
-        }
-
-        .carousel {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-
-        .carousel__cell {
-            position: absolute;
-            width: 280px;
-            height: 180px;
-            left: 10px;
-            top: 10px;
-            background: var(--dark-card);
-            border-radius: 12px;
-            border: 2px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .carousel__cell img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.7;
-        }
-
-        .carousel__cell .info {
-            position: relative;
-            z-index: 2;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            padding: 15px;
-            text-align: left;
-        }
-
-        .carousel-controls {
-            margin-top: 40px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .carousel-btn {
-            background: var(--dark-card);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .carousel-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Seção Preços SBT */
-        .pricing-section {
-            padding: 100px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .pricing-card {
-            background: var(--dark-card);
-            border-radius: 16px;
-            padding: 40px;
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pricing-card.featured {
-            border: 2px solid var(--primary);
-            transform: scale(1.03);
-            background: linear-gradient(180deg, #1e1e1e 0%, #251616 100%);
-        }
-
-        .badge {
-            position: absolute;
-            top: 20px;
-            right: -35px;
-            background: var(--primary);
-            color: white;
-            padding: 5px 40px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transform: rotate(45deg);
-        }
-
-        .pricing-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 25px;
-        }
-
-        .pricing-card ul {
-            list-style: none;
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .pricing-card ul li {
-            color: #ddd;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pricing-card ul li i {
-            color: var(--primary);
-        }
-
-        /* Outros Serviços (Lojas, Aniversários, 15 anos) */
-        .services-section {
-            padding: 80px 20px;
-            background: #181818;
-            text-align: center;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
-            margin: 40px auto 0 auto;
-        }
-
-        .service-box {
-            background: var(--dark-card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: var(--transition);
-        }
-
-        .service-box:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-        }
-
-        .service-box i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .service-box h4 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-        .service-box p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-
-        /* Modal de Checkout */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .modal {
-            background: var(--dark-card);
-            width: 100%;
-            max-width: 480px;
-            padding: 40px;
-            border-radius: 20px;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: modalPop 0.3s ease;
-        }
-
-        @keyframes modalPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: var(--light);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .modal h3 {
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .payment-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .pay-tab {
-            flex: 1;
-            padding: 10px;
-            background: #2a2a2a;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .pay-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .payment-content {
-            display: none;
-        }
-
-        .payment-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-bottom: 5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #121212;
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .qrcode-box {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .qrcode-box img {
-            width: 160px;
-            height: 160px;
-        }
-
-        .copy-pix-btn {
-            background: #2e7d32;
-            color: white;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px;
-            background: #0a0a0a;
-            color: var(--gray);
-            font-size: 0.9rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-    </style>
+/* ========== 8. OVERLAYS (stories, chamada, assinatura) ========== */
+.ov{position:fixed; inset:0; z-index:70; display:grid; place-items:center; background:rgba(5,2,10,.8); backdrop-filter:blur(6px)}
+/* Story: tela cheia no celular; cartão vertical centralizado no desktop */
+.sc{position:relative; width:100%; height:100%; display:flex; flex-direction:column; color:#fff; overflow:hidden}
+@media (min-width:768px){.sc{width:min(26rem,92vw); height:min(46rem,92dvh); border-radius:1.5rem; box-shadow:0 2rem 5rem rgba(0,0,0,.6)}}
+.sbars{display:flex; gap:.25rem; padding:calc(.8rem + env(safe-area-inset-top)) .8rem .4rem; position:relative; z-index:2}
+.sbars span{flex:1; height:.2rem; border-radius:9px; background:rgba(255,255,255,.3); overflow:hidden}
+.sbars i{display:block; height:100%; background:#fff}
+.sh{position:relative; z-index:2; display:flex; align-items:center; gap:.6rem; padding:.3rem .8rem}
+.sh .av{--s:2.2rem} .sh button{margin-left:auto}
+.sbody{flex:1; display:grid; place-content:center; justify-items:center; gap:1rem; padding:1rem; text-align:center}
+#se{font-size:clamp(5rem,28vw,8rem)} #st{font-size:clamp(1.2rem,5vw,1.6rem); font-weight:800; overflow-wrap:anywhere}
+.sz{position:absolute; inset:6rem 0 5rem 0; display:flex; z-index:1} .sz i{display:block; height:100%}
+.sr{position:relative; z-index:2; display:flex; gap:.5rem; padding:.8rem; padding-bottom:calc(.8rem + env(safe-area-inset-bottom))}
+.sr input{background:rgba(0,0,0,.3); border-color:rgba(255,255,255,.4); color:#fff}
+/* Modais: bottom sheet no celular, diálogo centralizado no desktop */
+.ov.sheet{place-items:end center}
+.dlg{position:relative; width:100%; max-width:26rem; max-height:92dvh; overflow-y:auto; background:var(--sf); border:1px solid var(--ln);
+  border-radius:1.6rem 1.6rem 0 0; padding:1.3rem 1.2rem calc(1.3rem + env(safe-area-inset-bottom)); animation:in .3s ease}
+@media (min-width:768px){.ov.sheet{place-items:center} .dlg{border-radius:1.6rem}}
+.dlg .x{position:absolute; top:.6rem; right:.6rem}
+.dlg h2{font-size:1.3rem; margin-bottom:.8rem} .dlg h2 b{background:var(--g); -webkit-background-clip:text; background-clip:text; color:transparent}
+.ben{display:grid; gap:.5rem; margin-bottom:1rem}
+.opts{display:grid; gap:.5rem; margin-bottom:.9rem} .opts.two{grid-template-columns:1fr 1fr}
+.opt{position:relative; cursor:pointer} .opt input{position:absolute; opacity:0}
+.opt>span{display:block; padding:.7rem .9rem; border-radius:.9rem; border:1px solid var(--ln); background:var(--sf2)}
+.opt small{display:block; color:var(--mu)}
+.opt input:checked+span{border-color:var(--m); box-shadow:0 0 0 2px rgba(236,72,153,.35)}
+.note{font-size:.75rem; color:var(--mu); margin-bottom:.9rem; padding:.6rem .8rem; border-radius:.8rem; background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.3)}
+.ctr{text-align:center; display:grid; gap:.8rem; justify-items:center; padding:1rem 0}
+.spin{width:2.8rem; height:2.8rem; border-radius:50%; border:4px solid var(--ln); border-top-color:var(--m); animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+/* Chamada */
+.call{max-width:22rem; margin:1rem; border-radius:1.6rem; text-align:center; padding:1.8rem 1.2rem 1.4rem; background:var(--cbg); display:grid; gap:1.2rem; justify-items:center; border:1px solid rgba(255,255,255,.2)}
+.call .av{--s:7rem; position:relative; z-index:1}
+.rg{position:relative; display:grid; place-items:center}
+.rg::before,.rg::after{content:""; position:absolute; inset:-.5rem; border-radius:50%; border:2px solid rgba(255,255,255,.5); animation:wv 1.8s infinite}
+.rg::after{animation-delay:.9s}
+@keyframes wv{from{transform:scale(.9);opacity:.8}to{transform:scale(1.5);opacity:0}}
+.me-v{width:5.5rem; height:7.5rem; border-radius:1rem; display:grid; place-items:center; font-size:2.2rem; background:linear-gradient(160deg,#a855f7,#38bdf8); border:2px solid rgba(255,255,255,.6)}
+.cbs{display:flex; gap:.9rem}
+.cb{display:grid; justify-items:center; gap:.3rem; font-size:.68rem}
+.cb i{width:3.4rem; height:3.4rem; border-radius:50%; background:rgba(255,255,255,.22); display:grid; place-items:center; font-style:normal; font-size:1.3rem}
+.cb.off i{background:#fff; color:#000} .cb.end i{background:var(--live)}
+.toast{position:fixed; left:50%; bottom:5.5rem; z-index:99; max-width:88vw; text-align:center; transform:translate(-50%,1rem); opacity:0; pointer-events:none; transition:.3s;
+  background:#fff; color:#0b0614; font-weight:600; padding:.6rem 1.1rem; border-radius:99px}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+@media (min-width:768px){.toast{bottom:2rem}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
+<div class="app">
 
-    <!-- Header -->
-    <header>
-        <div class="logo">JM <span>Produtora</span></div>
-        <nav>
-            <ul>
-                <li><a href="#home">Início</a></li>
-                <li><a href="#portfolio">Portfólio 3D</a></li>
-                <li><a href="#sbt">Pacotes SBT</a></li>
-                <li><a href="#servicos">Outros Serviços</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <h1>Leve sua Marca para a <span>SBT</span></h1>
-        <p>A JM Produtora transforma seu negócio e seus momentos especiais em grandes produções audiovisuais de alto impacto na televisão e internet.</p>
-        <a href="#sbt" class="btn">Ver Pacotes SBT</a>
+  <!-- ===== TELAS ===== -->
+  <main class="main">
+    <!-- FEED -->
+    <section id="feed" class="view on">
+      <header class="top"><h1 class="logo">Insta<b>Jovem</b></h1><button class="ib" data-go="chat" aria-label="Mensagens">💬</button></header>
+      <div class="col"><div class="stories" id="stories"></div><div id="posts"></div></div>
     </section>
 
-    <!-- Seção Carrossel 3D -->
-    <section class="carousel-section" id="portfolio">
-        <h2 class="section-title">Portfólio Audiovisual</h2>
-        <p class="section-subtitle">Nossas produções em destaque (Arraste ou clique para navegar)</p>
-        
-        <div class="scene">
-            <div class="carousel" id="carousel3D">
-                <div class="carousel__cell">
-                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=400&q=80" alt="Comercial TV">
-                    <div class="info"><h4>Comercial SBT</h4><p>Alta Definição</p></div>
-                </div>
-                <div class="carousel__cell">
-                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=400&q=80" alt="Festa 15 Anos">
-                    <div class="info"><h4>Festas 15 Anos</h4><p>Emoção Pura</p></div>
-                </div>
-                <div class="carousel__cell">
-                    <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=400&q=80" alt="Cobertura Lojas">
-                    <div class="info"><h4>Lojas & Comércios</h4><p>Vendas em Alta</p></div>
-                </div>
-                <div class="carousel__cell">
-                    <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=400&q=80" alt="Aniversários">
-                    <div class="info"><h4>Aniversários</h4><p>Momentos Únicos</p></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="carousel-controls">
-            <button class="carousel-btn" id="prevBtn"><i class="fas fa-arrow-left"></i> Anterior</button>
-            <button class="carousel-btn" id="nextBtn">Próximo <i class="fas fa-arrow-right"></i></button>
-        </div>
+    <!-- CHAT (lista + conversa) -->
+    <section id="chat" class="view">
+      <div class="clist"><header class="top"><h2>Mensagens</h2></header><div id="clist"></div></div>
+      <div class="conv none" id="conv">
+        <header class="ch">
+          <button class="ib hide-d" id="back" aria-label="Voltar">←</button><span id="cav"></span>
+          <div class="who"><b id="cn"></b><br><small id="cs">online</small></div>
+          <button class="ib" id="bph" aria-label="Ligação de voz">📞</button>
+          <button class="ib" id="bvd" aria-label="Chamada de vídeo">📹</button>
+        </header>
+        <div class="msgs" id="msgs" aria-live="polite"><p class="empty" style="margin:auto">Escolha uma conversa 💜</p></div>
+        <form class="cmp" id="cf"><input type="text" id="ci" placeholder="Mensagem…" maxlength="300" autocomplete="off" aria-label="Mensagem"><button class="send" aria-label="Enviar">➤</button></form>
+      </div>
     </section>
 
-    <!-- Seção Pacotes SBT -->
-    <section class="pricing-section" id="sbt">
-        <div style="text-align: center;">
-            <h2 class="section-title">Anuncie na SBT com a JM</h2>
-            <p class="section-subtitle">Escolha o pacote ideal para alavancar sua autoridade no mercado</p>
+    <!-- LIVES -->
+    <section id="live" class="view">
+      <div class="chips" id="chips"></div>
+      <div class="lw">
+        <div class="stage" id="stage">
+          <div class="le" id="le"></div>
+          <div class="lb"><span class="air">● AO VIVO</span><span class="vw" id="vw"></span></div>
+          <div class="hearts" id="hearts"></div>
+          <div class="lh"><span id="lav"></span><div><b id="ln"></b><small id="lt"></small></div><button class="fol" id="fol">Seguir</button></div>
         </div>
-
-        <div class="pricing-grid">
-            <!-- Pacote 1 -->
-            <div class="pricing-card">
-                <h3>Comercial SBT</h3>
-                <div class="price">R$ 6.000</div>
-                <ul>
-                    <li><i class="fas fa-check"></i> Produção de Comercial Profissional</li>
-                    <li><i class="fas fa-check"></i> Veiculação garantida na grade SBT</li>
-                    <li><i class="fas fa-check"></i> Edição cinematográfica</li>
-                    <li><i class="fas fa-check"></i> Direção de arte especializada</li>
-                </ul>
-                <button class="btn" onclick="openCheckout('Comercial SBT', 6000)">Contratar Agora</button>
-            </div>
-
-            <!-- Pacote 2 (Destaque) -->
-            <div class="pricing-card featured">
-                <div class="badge">POPULAR</div>
-                <h3>Comercial + Jornalista</h3>
-                <div class="price">R$ 8.000</div>
-                <ul>
-                    <li><i class="fas fa-check"></i> Comercial exclusivo na SBT</li>
-                    <li><i class="fas fa-check"></i> <strong>Jornalista ao vivo</strong> falando sobre seu negócio</li>
-                    <li><i class="fas fa-check"></i> Máxima credibilidade junto ao público</li>
-                    <li><i class="fas fa-check"></i> Roteiro personalizado</li>
-                </ul>
-                <button class="btn" onclick="openCheckout('Comercial + Jornalista', 8000)">Contratar Agora</button>
-            </div>
-
-            <!-- Pacote 3 -->
-            <div class="pricing-card">
-                <h3>Programa Completo</h3>
-                <div class="price">R$ 12.000</div>
-                <ul>
-                    <li><i class="fas fa-check"></i> Comercial veiculado na SBT</li>
-                    <li><i class="fas fa-check"></i> Jornalista falando do comercial</li>
-                    <li><i class="fas fa-check"></i> <strong>Uso direto no programa</strong> de TV</li>
-                    <li><i class="fas fa-check"></i> Cobertura estendida e bônus digital</li>
-                </ul>
-                <button class="btn" onclick="openCheckout('Programa Completo SBT', 12000)">Contratar Agora</button>
-            </div>
+        <div class="lbox">
+          <div class="lchat" id="lchat" aria-live="polite"></div>
+          <form class="cmp" id="lf"><input type="text" id="li" placeholder="Diga algo na live…" maxlength="80" autocomplete="off" aria-label="Mensagem na live">
+            <button type="button" class="ib" id="lh">❤️</button><button class="send" aria-label="Enviar">➤</button></form>
         </div>
+      </div>
     </section>
 
-    <!-- Outros Serviços -->
-    <section class="services-section" id="servicos">
-        <h2 class="section-title">Outras Produções</h2>
-        <p class="section-subtitle">Especialistas em eternizar e impulsionar momentos</p>
-        
-        <div class="services-grid">
-            <div class="service-box">
-                <i class="fas fa-store"></i>
-                <h4>Filmagens de Lojas</h4>
-                <p>Mostre seu espaço comercial com imagens aéreas e internas de altíssima qualidade para atrair mais clientes.</p>
-            </div>
-            <div class="service-box">
-                <i class="fas fa-birthday-cake"></i>
-                <h4>Aniversários</h4>
-                <p>Cobertura completa em vídeo e foto para eternizar cada sorriso e detalhe da sua comemoração.</p>
-            </div>
-            <div class="service-box">
-                <i class="fas fa-glass-cheers"></i>
-                <h4>Festas de 15 Anos</h4>
-                <p>Produções cinematográficas feitas sob medida para o dia mais esperado da sua vida.</p>
-            </div>
+    <!-- PERFIL -->
+    <section id="perfil" class="view">
+      <header class="top"><h2>@voce</h2></header>
+      <div class="col">
+        <div class="pt"><span class="av" style="--a:#a855f7;--b:#38bdf8">😎</span>
+          <div class="stats"><div><b>248</b><small>posts</small></div><div><b>12,4 mil</b><small>seguidores</small></div><div><b>386</b><small>seguindo</small></div></div></div>
+        <p class="bio"><b>Você</b><span class="badge" id="badge" hidden>✔ Comercial</span><br>Criador(a) de conteúdo 🎬 música, games e rolê 💜</p>
+        <div class="pb"><button class="btn2" data-t="Editar perfil (simulado)">Editar perfil</button><button class="btn2" data-t="Link copiado! 🔗">Compartilhar</button></div>
+
+        <button class="banner" id="banner"><span class="ic">🚀</span><span><b>Tornar-se Perfil Comercial</b><small>Venda e divulgue produtos · R$ 19,90/mês</small></span></button>
+
+        <div class="biz" id="biz" hidden>
+          <h3>📊 Painel comercial <span id="plano"></span></h3>
+          <div class="kp"><div><b>48,2 mil</b><small>Alcance</small></div><div><b>1.930</b><small>Cliques</small></div><div><b>87</b><small>Vendas</small></div></div>
+          <h3>🛍️ Vitrine de produtos</h3>
+          <div class="pl" id="pl"></div>
+          <form class="pf" id="pf">
+            <select id="pe" aria-label="Ícone"><option>👕</option><option>👟</option><option>🎧</option><option>🍰</option><option>🎨</option><option>🧢</option></select>
+            <input type="text" id="pn" placeholder="Nome do produto" maxlength="40" required aria-label="Nome do produto">
+            <input type="text" id="pp" placeholder="Preço (ex.: 49,90)" inputmode="decimal" required aria-label="Preço" style="grid-column:2">
+            <button class="btn">Adicionar à vitrine</button>
+          </form>
+          <button class="cancel" id="cancel">Cancelar assinatura</button>
         </div>
+        <div class="g3" id="g3"></div>
+      </div>
     </section>
+  </main>
 
-    <!-- Modal de Checkout -->
-    <div class="modal-overlay" id="checkoutModal">
-        <div class="modal">
-            <button class="close-modal" onclick="closeCheckout()">&times;</button>
-            <h3 id="modalTitle">Finalizar Contratação</h3>
-            
-            <div class="payment-tabs">
-                <button class="pay-tab active" onclick="switchTab('pix')"><i class="fab fa-pix"></i> PIX</button>
-                <button class="pay-tab" onclick="switchTab('card')"><i class="fas fa-credit-card"></i> Cartão</button>
-            </div>
+  <!-- ===== NAVEGAÇÃO: barra inferior (celular) / sidebar (>=768px) ===== -->
+  <nav class="nav" aria-label="Principal">
+    <div class="brand">Insta<b>Jovem</b></div>
+    <button class="nb on" data-tab="feed"><span class="i">🏠</span><span>Início</span></button>
+    <button class="nb" data-tab="chat"><span class="i">💬</span><span>Chat</span><i class="dot" id="cdot"></i></button>
+    <button class="nb" data-tab="live"><span class="i">🔴</span><span>Lives</span></button>
+    <button class="nb" data-tab="perfil"><span class="i">👤</span><span>Perfil</span></button>
+  </nav>
+</div>
 
-            <!-- Aba PIX -->
-            <div id="pixContent" class="payment-content active">
-                <div class="qrcode-box">
-                    <!-- QR Code simulado via API pública -->
-                    <img id="qrCodeImg" src="" alt="QR Code PIX">
-                </div>
-                <p style="text-align: center; font-size: 0.9rem; margin-bottom: 10px; color: var(--gray);">Escaneie o QR Code com o app do seu banco ou clique abaixo:</p>
-                <input type="text" id="pixKeyInput" value="00020126580014br.gov.bcb.pix...jmprodutora" readonly style="width:100%; padding:10px; background:#121212; border:1px solid #444; color:#fff; border-radius:6px; font-size:0.8rem; text-align:center;">
-                <button class="copy-pix-btn" onclick="copyPix()"><i class="fas fa-copy"></i> Copiar Código PIX</button>
-            </div>
+<!-- Story -->
+<div class="ov" id="story" hidden>
+  <div class="sc" id="sc">
+    <div class="sbars" id="sbars"></div>
+    <div class="sh"><span id="sh" style="display:flex;align-items:center;gap:.6rem"></span><button class="ib" id="sx" aria-label="Fechar">✕</button></div>
+    <div class="sbody"><div id="se"></div><p id="st"></p></div>
+    <div class="sz"><i id="sp" style="flex:3"></i><i id="sn" style="flex:7"></i></div>
+    <form class="sr" id="sf"><input type="text" placeholder="Enviar mensagem…" maxlength="80" aria-label="Responder"><button class="send" aria-label="Enviar">➤</button></form>
+  </div>
+</div>
 
-            <!-- Aba Cartão -->
-            <div id="cardContent" class="payment-content">
-                <form onsubmit="handleCardSubmit(event)">
-                    <div class="form-group">
-                        <label>Nome no Cartão</label>
-                        <input type="text" placeholder="Nome Completo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Número do Cartão</label>
-                        <input type="text" placeholder="0000 0000 0000 0000" required>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Validade</label>
-                            <input type="text" placeholder="MM/AA" required>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>CVV</label>
-                            <input type="password" placeholder="123" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Pagar com Cartão</button>
-                </form>
-            </div>
-        </div>
+<!-- Chamada (modal centralizado) -->
+<div class="ov" id="call" hidden>
+  <div class="call" id="callc" role="dialog" aria-label="Chamada">
+    <small id="ct" style="opacity:.9"></small>
+    <div class="rg"><span id="cva"></span></div>
+    <div><h2 id="cname"></h2><p id="cstat" style="font-variant-numeric:tabular-nums">Chamando…</p></div>
+    <div class="me-v" id="mev" hidden>😎</div>
+    <div class="cbs">
+      <button class="cb"><i>🎤</i>Mudo</button><button class="cb"><i>🎥</i>Câmera</button><button class="cb"><i>🔊</i>Som</button>
+      <button class="cb end" id="cend"><i>📞</i>Encerrar</button>
     </div>
+  </div>
+</div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 JM Produtora. Todos os direitos reservados. Desenvolvido com excelência sênior.</p>
-    </footer>
+<!-- Assinatura (simulada) -->
+<div class="ov sheet" id="sub" hidden>
+  <div class="dlg" role="dialog" aria-label="Assinatura">
+    <button class="ib x" id="subx" aria-label="Fechar">✕</button>
+    <div id="s1">
+      <h2>InstaJovem <b>Business</b></h2>
+      <ul class="ben"><li>🛍️ Vitrine de produtos no perfil</li><li>📣 Divulgação no feed (posts patrocinados)</li><li>📊 Painel de alcance, cliques e vendas</li><li>✔ Selo de Perfil Comercial</li></ul>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="plan" value="Mensal" checked><span><b>Mensal</b><small>R$ 19,90 / mês</small></span></label>
+        <label class="opt"><input type="radio" name="plan" value="Anual"><span><b>Anual · 25% OFF</b><small>R$ 179,00 / ano</small></span></label>
+      </div>
+      <div class="opts two"><label class="opt"><input type="radio" name="pay" checked><span>💠 Pix</span></label><label class="opt"><input type="radio" name="pay"><span>💳 Cartão</span></label></div>
+      <p class="note">⚠️ Simulação: nenhum pagamento real é feito e nenhum dado de cartão é solicitado.</p>
+      <button class="btn" id="go">Assinar agora</button>
+    </div>
+    <div id="s2" class="ctr" hidden><div class="spin"></div><p>Processando pagamento…</p></div>
+    <div id="s3" class="ctr" hidden><div style="font-size:3rem">🎉</div><h3>Assinatura ativada!</h3><p style="color:var(--mu)">Recursos de divulgação desbloqueados.</p><button class="btn" id="done">Ir para o painel</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <!-- JavaScript Integrado -->
-    <script>
-        // Carrossel 3D Lógica
-        const carousel = document.getElementById('carousel3D');
-        const cells = carousel.querySelectorAll('.carousel__cell');
-        let selectedIndex = 0;
-        const cellCount = cells.length;
+<script>
+/* ========== UTILITÁRIOS ========== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); // anti-injeção de HTML
+const rnd=a=>a[Math.random()*a.length|0], fmt=n=>n.toLocaleString('pt-BR');
+const hh=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const mmss=s=>String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+let tt; const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)};
 
-        function updateCarousel() {
-            const angle = (selectedIndex / cellCount) * -360;
-            carousel.style.transform = `translateZ(-250px) rotateY(${angle}deg)`;
-        }
+/* ========== DADOS FICTÍCIOS: [nome, @user, emoji, cor1, cor2] ========== */
+const U={eu:['Você','@voce','😎','#a855f7','#38bdf8'],luna:['Luna','@lunavibes','🦋','#ec4899','#a855f7'],theo:['Theo','@theo.skate','🛹','#38bdf8','#6366f1'],
+  mia:['Mia','@miadance','💃','#ff7a3d','#ec4899'],caio:['Caio','@caio.games','🎮','#22c55e','#38bdf8'],bia:['Bia','@bia.arte','🎨','#f59e0b','#ec4899'],davi:['Davi','@davi.violao','🎸','#6366f1','#ec4899']};
+const av=(id,s='2.8rem')=>`<span class="av" style="--s:${s};--a:${U[id][3]};--b:${U[id][4]}">${U[id][2]}</span>`;
+const SL={luna:[['#ec4899,#a855f7','🌅','Pôr do sol de hoje!'],['#a855f7,#38bdf8','🎧','Playlist nova no ar']],theo:[['#38bdf8,#6366f1','🛹','Manobra nova 🔥']],
+  mia:[['#ff7a3d,#ec4899','💃','Ensaio da coreo'],['#ec4899,#7c3aed','✨','Show sábado!']],caio:[['#22c55e,#38bdf8','🎮','Ranked até de madrugada']],
+  bia:[['#f59e0b,#ec4899','🎨','Desenho novo pronto']],davi:[['#6366f1,#ec4899','🎸','Cover acústico']]};
+const POSTS=[
+  {id:1,u:'luna',e:'🌅',bg:'#ec4899,#a855f7',cap:'Fim de tarde perfeito 🌅 #vibes',likes:128,com:[['theo','Que lindo!! 😍']]},
+  {id:2,u:'theo',e:'🛹',bg:'#38bdf8,#6366f1',cap:'Finalmente acertei o kickflip 🔥',likes:342,com:[['caio','Monstro!']]},
+  {id:3,u:'mia',e:'💃',bg:'#ff7a3d,#ec4899',cap:'Ensaio de hoje, quem vem sábado? 💜',likes:517,com:[['luna','Vou com certeza!']]},
+  {id:4,u:'bia',e:'🎨',bg:'#f59e0b,#ec4899',cap:'Novo trabalho finalizado ✨ #arte',likes:204,com:[]}];
 
-        cells.forEach((cell, index) => {
-            const cellAngle = (index / cellCount) * 360;
-            cell.style.transform = `rotateY(${cellAngle}deg) translateZ(250px)`;
-        });
+/* ========== ESTADO (localStorage com try/catch) ========== */
+let S={liked:{},coms:{},comercial:false,plano:'',prods:[],promos:[],seen:{}};
+try{Object.assign(S,JSON.parse(localStorage.getItem('ij2'))||{})}catch(e){}
+const save=()=>{try{localStorage.setItem('ij2',JSON.stringify(S))}catch(e){}};
 
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            selectedIndex++;
-            updateCarousel();
-        });
+/* ========== NAVEGAÇÃO ========== */
+function go(t){
+  $$('.view').forEach(v=>v.classList.toggle('on',v.id===t));
+  $$('.nb').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  t==='live'?startLive():stopLive();
+}
+document.addEventListener('click',e=>{
+  const n=e.target.closest('.nb'); if(n) go(n.dataset.tab);
+  const g=e.target.closest('[data-go]'); if(g) go(g.dataset.go);
+  const t=e.target.closest('[data-t]'); if(t) toast(t.dataset.t);
+});
 
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            selectedIndex--;
-            updateCarousel();
-        });
+/* ========== STORIES ========== */
+const ORD=Object.keys(U), DUR=4000, ST={i:0,s:0,t:0,iv:null};
+const slides=id=>(SL[id]||[]).map(([bg,e,t])=>({bg,e,t}));
+function renderStories(){
+  $('#stories').innerHTML=ORD.map((id,i)=>{
+    const none=id==='eu'; // "Seu status" abre um story simulado
+    return `<button class="sb" data-i="${i}"><span class="ring ${none&&!S.seen.eu?'none':S.seen[id]?'seen':''}">${av(id,'3.6rem')}</span><span>${id==='eu'?'Seu status':esc(U[id][0])}</span></button>`}).join('');
+}
+$('#stories').addEventListener('click',e=>{const b=e.target.closest('.sb'); if(b) openStory(+b.dataset.i)});
+function openStory(i){
+  if(ORD[i]==='eu'){SL.eu=[['#a855f7,#38bdf8','😎','Meu novo status!']]}
+  ST.i=i;ST.s=0;$('#story').hidden=false;draw();clearInterval(ST.iv);ST.iv=setInterval(tick,50);
+}
+function draw(){
+  const id=ORD[ST.i], sl=slides(id), c=sl[ST.s]; S.seen[id]=1; save();
+  $('#sbars').innerHTML=sl.map((_,k)=>`<span><i style="width:${k<ST.s?100:0}%"></i></span>`).join('');
+  $('#sh').innerHTML=`${av(id,'2.2rem')}<b>${esc(U[id][0])}</b><small>agora</small>`;
+  $('#sc').style.background=`linear-gradient(160deg,${c.bg})`;
+  $('#se').textContent=c.e;$('#st').textContent=c.t;ST.t=0;
+}
+function tick(){ST.t+=50;const b=$$('#sbars i')[ST.s];if(b)b.style.width=Math.min(100,ST.t/DUR*100)+'%';if(ST.t>=DUR)nextS()}
+function nextS(){
+  if(ST.s<slides(ORD[ST.i]).length-1){ST.s++;draw()}
+  else{do{ST.i++}while(ST.i<ORD.length&&!slides(ORD[ST.i]).length); ST.i<ORD.length?(ST.s=0,draw()):closeStory()}
+}
+function prevS(){if(ST.s>0)ST.s--;else if(ST.i>0&&slides(ORD[ST.i-1]).length){ST.i--;ST.s=0}draw()}
+function closeStory(){clearInterval(ST.iv);$('#story').hidden=true;renderStories()}
+$('#sp').onclick=prevS;$('#sn').onclick=nextS;$('#sx').onclick=closeStory;
+$('#story').addEventListener('click',e=>{if(e.target.id==='story')closeStory()});
+$('#sf').addEventListener('submit',e=>{e.preventDefault();e.target.reset();toast('Resposta enviada 💜')});
 
-        // Inicializa carrossel
-        updateCarousel();
+/* ========== FEED ========== */
+const all=()=>[...S.promos,...POSTS], cnt=n=>n?`Ver ${n} comentário${n>1?'s':''}`:'Seja o primeiro a comentar';
+function postHTML(p){
+  const u=U[p.u], on=!!S.liked[p.id], cs=[...p.com,...(S.coms[p.id]||[]).map(t=>['eu',t])];
+  return `<article class="post" data-id="${p.id}">
+    <div class="ph">${av(p.u,'2.4rem')}<div><b>${esc(u[0])}</b><small>${esc(u[1])}</small></div>${p.promo?'<span class="tag">Patrocinado</span>':''}</div>
+    <div class="media" style="background:linear-gradient(135deg,${p.bg})"><span>${p.e}</span><i class="pop">💜</i></div>
+    <div class="acts"><button class="act like ${on?'on':''}">${on?'💜':'🤍'} <span>${fmt(p.likes+(on?1:0))}</span></button><button class="act cb2">💬</button><button class="act sh2">➤</button></div>
+    <p class="cap"><b>${esc(u[1])}</b> ${esc(p.cap)}</p>
+    ${p.promo?'<button class="buy">🛒 Comprar agora</button>':''}
+    <button class="ver">${cnt(cs.length)}</button>
+    <div class="cm" hidden><div class="cl">${cs.map(([id,t])=>`<p><b>${esc(U[id][1])}</b> ${esc(t)}</p>`).join('')}</div>
+      <form class="cf"><input type="text" placeholder="Adicione um comentário…" maxlength="100" aria-label="Comentário" autocomplete="off"><button class="mini">Enviar</button></form></div></article>`;
+}
+const renderPosts=()=>$('#posts').innerHTML=all().map(postHTML).join('');
+function like(art,on){
+  const id=art.dataset.id,p=all().find(x=>String(x.id)===id); on?S.liked[id]=1:delete S.liked[id]; save();
+  const b=$('.like',art); b.classList.toggle('on',on); b.firstChild.textContent=on?'💜 ':'🤍 '; $('span',b).textContent=fmt(p.likes+(on?1:0));
+}
+$('#posts').addEventListener('click',e=>{
+  const a=e.target.closest('.post'); if(!a) return;
+  if(e.target.closest('.like')) like(a,!S.liked[a.dataset.id]);
+  else if(e.target.closest('.cb2,.ver')){const c=$('.cm',a);c.hidden=!c.hidden;if(!c.hidden)$('input',c).focus()}
+  else if(e.target.closest('.sh2')) toast('Link copiado! 🔗');
+  else if(e.target.closest('.buy')) toast('🛒 Compra simulada: nada foi cobrado');
+});
+$('#posts').addEventListener('dblclick',e=>{ // duplo clique curte
+  const m=e.target.closest('.media'); if(!m) return; const a=m.closest('.post'),p=$('.pop',m);
+  if(!S.liked[a.dataset.id]) like(a,true); p.classList.remove('go');void p.offsetWidth;p.classList.add('go');
+});
+$('#posts').addEventListener('submit',e=>{
+  if(!e.target.matches('.cf')) return; e.preventDefault();
+  const a=e.target.closest('.post'),i=$('input',e.target),t=i.value.trim(); if(!t) return;
+  const id=a.dataset.id,p=all().find(x=>String(x.id)===id); (S.coms[id]=S.coms[id]||[]).push(t); save();
+  $('.cl',a).insertAdjacentHTML('beforeend',`<p><b>@voce</b> ${esc(t)}</p>`); $('.ver',a).textContent=cnt(p.com.length+S.coms[id].length); i.value='';
+});
 
-        // Autoplay do carrossel a cada 4 segundos
-        setInterval(() => {
-            selectedIndex++;
-            updateCarousel();
-        }, 4000);
+/* ========== CHAT ========== */
+const MSG={luna:[['el','Oi! Viu meu story? 🌅','10:21'],['el','Bora gravar um vídeo juntos?','10:22']],theo:[['el','Mano, vem andar de skate hoje?','09:40']],mia:[['me','Amei a coreo!','ontem'],['el','Obrigada!! 💃','ontem']]};
+const UNR={luna:2,theo:1}, RESP=['kkkk verdade!','Bora! 🔥','Manda mais 👀','Haha 😂','Tá combinado 💜','Sério?? conta tudo']; let CUR=null;
+function renderChats(){
+  $('#clist').innerHTML=Object.keys(MSG).map(id=>{const l=MSG[id].slice(-1)[0]||['el','Diga oi 👋',''];
+    return `<button class="ci ${id===CUR?'on':''}" data-id="${id}">${av(id,'3rem')}<span class="t"><b>${esc(U[id][0])}</b><small>${l[0]==='me'?'Você: ':''}${esc(l[1])}</small></span>${UNR[id]?`<i class="unr">${UNR[id]}</i>`:''}</button>`}).join('');
+  $('#cdot').hidden=!Object.values(UNR).some(Boolean);
+}
+function renderMsgs(){
+  const b=$('#msgs'); b.innerHTML=CUR?MSG[CUR].map(([t,x,h])=>`<div class="m ${t}">${esc(x)}${t==='sys'?'':`<time>${esc(h)}</time>`}</div>`).join(''):'<p class="empty" style="margin:auto">Escolha uma conversa 💜</p>';
+  b.scrollTop=b.scrollHeight;
+}
+function push(id,t,x){MSG[id].push([t,x,hh()]);if(CUR===id)renderMsgs();renderChats()}
+function openConv(id){
+  CUR=id;UNR[id]=0;$('#conv').classList.remove('none');$('#chat').classList.add('open');
+  $('#cav').innerHTML=av(id,'2.4rem');$('#cn').textContent=U[id][0];$('#cs').textContent='online';renderChats();renderMsgs();
+}
+$('#clist').addEventListener('click',e=>{const b=e.target.closest('.ci');if(b)openConv(b.dataset.id)});
+$('#back').onclick=()=>{$('#chat').classList.remove('open');CUR=null;$('#conv').classList.add('none');renderChats();renderMsgs()};
+$('#cf').addEventListener('submit',e=>{
+  e.preventDefault();const i=$('#ci'),t=i.value.trim();if(!t||!CUR)return;const id=CUR;i.value='';push(id,'me',t);
+  setTimeout(()=>{if(CUR===id)$('#cs').textContent='digitando…'},500);
+  setTimeout(()=>{push(id,'el',rnd(RESP));if(CUR!==id){UNR[id]=(UNR[id]||0)+1;renderChats()}else $('#cs').textContent='online'},1700);
+});
 
-        // Sistema de Modal e Checkout
-        const modal = document.getElementById('checkoutModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const qrCodeImg = document.getElementById('qrCodeImg');
+/* ========== CHAMADA (modal centralizado) ========== */
+const C={id:null,tipo:'',sec:0,iv:null,to:null,on:false,end:false};
+function startCall(tipo){
+  if(!CUR)return; clearTimeout(C.to);clearInterval(C.iv); Object.assign(C,{id:CUR,tipo,sec:0,on:false,end:false});
+  $('#callc').style.setProperty('--cbg',`linear-gradient(160deg,${U[CUR][3]},${U[CUR][4]})`);
+  $('#cva').innerHTML=av(CUR,'7rem');$('#cname').textContent=U[CUR][0];$('#cstat').textContent='Chamando…';$('#mev').hidden=true;
+  $('#ct').textContent=tipo==='video'?'Chamada de vídeo InstaJovem':'Chamada de voz InstaJovem';$$('.cb').forEach(b=>b.classList.remove('off'));
+  $('#call').hidden=false;
+  C.to=setTimeout(()=>{C.on=true;$('#mev').hidden=tipo!=='video';$('#cstat').textContent='00:00';C.iv=setInterval(()=>{C.sec++;$('#cstat').textContent=mmss(C.sec)},1000)},2400);
+}
+function endCall(){
+  if($('#call').hidden||C.end)return;C.end=true;clearTimeout(C.to);clearInterval(C.iv);
+  const r=C.tipo==='video'?'📹 Chamada de vídeo':'📞 Chamada de voz';
+  $('#cstat').textContent=C.on?'Encerrada · '+mmss(C.sec):'Chamada cancelada';
+  push(C.id,'sys',C.on?`${r} · ${mmss(C.sec)}`:`${r} · sem resposta`);setTimeout(()=>{$('#call').hidden=true},900);
+}
+$('#bph').onclick=()=>startCall('voz');$('#bvd').onclick=()=>startCall('video');$('#cend').onclick=endCall;
+$$('.cb:not(.end)').forEach(b=>b.onclick=()=>b.classList.toggle('off'));
 
-        function openCheckout(packageName, price) {
-            modalTitle.innerText = `${packageName} - R$ ${price.toLocaleString('pt-BR')},00`;
-            // Gera QR Code dinâmico usando API pública com base no preço/pacote
-            qrCodeImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=JM_Produtora_${packageName}_R$${price}`;
-            modal.style.display = 'flex';
-        }
+/* ========== LIVES (chat simulado em tempo real) ========== */
+const LIVES=[{id:'mia',t:'Aula aberta de coreografia',v:1240,bg:'#ff7a3d,#ec4899,#7c3aed',e:'💃'},{id:'caio',t:'Ranked ao vivo 🎮',v:860,bg:'#22c55e,#0ea5e9,#6366f1',e:'🎮'},{id:'davi',t:'Show acústico de sexta',v:430,bg:'#6366f1,#ec4899,#a855f7',e:'🎸'}];
+const NM=['ana','joao_','kaue','lu.s2','pedrinho','jujuba','gabi','rafa'],FL=['🔥🔥🔥','Arrasou!','Oi de BH!','Toca aquela!','kkkkk','Primeira vez aqui, amei 💜','Manda salve!','Que energia!'];
+const LV={i:0,iv:null,v:0,n:0,f:{}};
+function loadLive(i){
+  LV.i=i;const l=LIVES[i];LV.v=l.v;$('#stage').style.setProperty('--lbg',`linear-gradient(160deg,${l.bg})`);
+  $('#le').textContent=l.e;$('#lav').innerHTML=av(l.id,'2.4rem');$('#ln').textContent=U[l.id][1];$('#lt').textContent=l.t;$('#vw').textContent='👁 '+fmt(LV.v);
+  $('#fol').textContent=LV.f[l.id]?'Seguindo':'Seguir';$('#fol').classList.toggle('on',!!LV.f[l.id]);
+  $('#lchat').innerHTML='';lmsg('InstaJovem','Bem-vindo(a)! Respeite todo mundo 💜',1);
+  $('#chips').innerHTML=LIVES.map((x,k)=>`<button class="chip ${k===i?'on':''}" data-i="${k}">${U[x.id][2]} ${esc(U[x.id][0])}</button>`).join('');
+}
+function lmsg(w,t,sys){const b=$('#lchat');b.insertAdjacentHTML('beforeend',`<p class="${sys?'sys':''}"><b>${esc(w)}</b>${esc(t)}</p>`);while(b.children.length>40)b.firstChild.remove();b.scrollTop=b.scrollHeight}
+function heart(){const h=document.createElement('span');h.className='ht';h.textContent=rnd(['❤️','💜','🔥','✨','💖']);h.style.left=Math.random()*20+'px';h.onanimationend=()=>h.remove();$('#hearts').appendChild(h)}
+function startLive(){stopLive();loadLive(LV.i);LV.iv=setInterval(()=>{LV.n++;lmsg(rnd(NM),rnd(FL));if(Math.random()>.6)heart();if(LV.n%2===0){LV.v=Math.max(50,LV.v+Math.round(Math.random()*30-8));$('#vw').textContent='👁 '+fmt(LV.v)}},1300)}
+function stopLive(){clearInterval(LV.iv)}
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b)loadLive(+b.dataset.i)});
+$('#fol').onclick=()=>{const id=LIVES[LV.i].id;LV.f[id]=!LV.f[id];loadLive(LV.i)};
+$('#lh').onclick=()=>{for(let i=0;i<4;i++)setTimeout(heart,i*120)};
+$('#lf').addEventListener('submit',e=>{e.preventDefault();const i=$('#li'),t=i.value.trim();if(t){lmsg('Você',t);i.value=''}});
 
-        function closeCheckout() {
-            modal.style.display = 'none';
-        }
+/* ========== PERFIL COMERCIAL + ASSINATURA ========== */
+function renderProfile(){
+  $('#badge').hidden=!S.comercial;$('#banner').hidden=S.comercial;$('#biz').hidden=!S.comercial;$('#plano').textContent='Plano '+S.plano;
+  $('#pl').innerHTML=S.prods.length?S.prods.map((p,i)=>`<div class="pr"><span class="e">${esc(p.e)}</span><b>${esc(p.n)}</b><small>R$ ${esc(p.p)}</small>
+    <button class="mini" data-a="pr" data-i="${i}">Divulgar no feed</button><button class="mini gh" data-a="del" data-i="${i}">Remover</button></div>`).join('')
+    :'<p class="empty" style="grid-column:1/-1">Nenhum produto ainda 👇</p>';
+}
+$('#pl').addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;const i=+b.dataset.i,p=S.prods[i];
+  if(b.dataset.a==='del'){S.prods.splice(i,1);save();renderProfile()}
+  else{S.promos.unshift({id:'p'+Date.now(),u:'eu',e:p.e,bg:'#a855f7,#ec4899,#38bdf8',cap:`${p.n} por R$ ${p.p} · Link na bio!`,likes:0,com:[],promo:true});
+    S.promos=S.promos.slice(0,5);save();renderPosts();go('feed');toast('Post patrocinado publicado! 📣')}
+});
+$('#pf').addEventListener('submit',e=>{
+  e.preventDefault();const n=$('#pn').value.trim(),v=parseFloat($('#pp').value.replace(/\./g,'').replace(',','.'));
+  if(!n||isNaN(v)||v<0)return toast('Preço inválido. Ex.: 49,90');
+  S.prods.push({e:$('#pe').value,n,p:v.toLocaleString('pt-BR',{minimumFractionDigits:2})});save();e.target.reset();renderProfile();toast('Produto adicionado 🛍️');
+});
+const show=n=>['s1','s2','s3'].forEach(k=>$('#'+k).hidden=k!=='s'+n);
+$('#banner').onclick=()=>{show(1);$('#sub').hidden=false};
+const closeSub=()=>{if($('#s2').hidden)$('#sub').hidden=true};
+$('#subx').onclick=closeSub;$('#sub').addEventListener('click',e=>{if(e.target.id==='sub')closeSub()});
+$('#go').onclick=()=>{const pl=$('input[name=plan]:checked').value;show(2);setTimeout(()=>{S.comercial=true;S.plano=pl;save();renderProfile();show(3)},1800)};
+$('#done').onclick=()=>{$('#sub').hidden=true;go('perfil');$('#biz').scrollIntoView({behavior:'smooth'})};
+let ct;$('#cancel').onclick=e=>{const b=e.currentTarget;
+  if(b.dataset.ok){S.comercial=false;S.plano='';S.promos=[];save();delete b.dataset.ok;b.textContent='Cancelar assinatura';renderProfile();renderPosts();toast('Assinatura cancelada')}
+  else{b.dataset.ok=1;b.textContent='Tem certeza? Toque de novo';clearTimeout(ct);ct=setTimeout(()=>{delete b.dataset.ok;b.textContent='Cancelar assinatura'},3000)}};
+$('#g3').innerHTML=[['🎬','#a855f7,#ec4899'],['🎧','#38bdf8,#6366f1'],['🎮','#22c55e,#38bdf8'],['🌃','#6366f1,#ec4899'],['🍕','#ef4444,#f59e0b'],['🛹','#0ea5e9,#a855f7']]
+  .map(([e,b])=>`<span style="background:linear-gradient(135deg,${b})">${e}</span>`).join('');
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeCheckout();
-            }
-        }
+/* ESC fecha o overlay do topo */
+document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;
+  if(!$('#sub').hidden)closeSub();else if(!$('#call').hidden)endCall();else if(!$('#story').hidden)closeStory()});
 
-        // Alternar abas Pix / Cartão
-        function switchTab(tab) {
-            const pixTab = document.querySelector('.payment-tabs button:nth-child(1)');
-            const cardTab = document.querySelector('.payment-tabs button:nth-child(2)');
-            const pixContent = document.getElementById('pixContent');
-            const cardContent = document.getElementById('cardContent');
-
-            if(tab === 'pix') {
-                pixTab.classList.add('active');
-                cardTab.classList.remove('active');
-                pixContent.classList.add('active');
-                cardContent.classList.remove('active');
-            } else {
-                cardTab.classList.add('active');
-                pixTab.classList.remove('active');
-                cardContent.classList.add('active');
-                pixContent.classList.remove('active');
-            }
-        }
-
-        // Copiar Chave PIX
-        function copyPix() {
-            const copyText = document.getElementById("pixKeyInput");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value);
-            alert("Código PIX copiado com sucesso! Cole no app do seu banco.");
-        }
-
-        // Simulação de Pagamento com Cartão
-        function handleCardSubmit(event) {
-            event.preventDefault();
-            alert("Pagamento com cartão processado e aprovado com sucesso! Entraremos em contato.");
-            closeCheckout();
-        }
-    </script>
+/* ========== INICIALIZAÇÃO ========== */
+renderStories();renderPosts();renderChats();renderProfile();
+</script>
 </body>
 </html>
